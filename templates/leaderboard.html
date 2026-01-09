@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="leaderboard-page">
+    <h2>Escape Leaderboard</h2>
+    
+    <div class="leaderboard-container">
+        {% if leaderboard %}
+            <div class="leaderboard-header">
+                <span>Rank</span>
+                <span>Player</span>
+                <span>Time</span>
+            </div>
+            
+            {% for player in leaderboard %}
+            <div class="leaderboard-row {% if loop.index == 1 %}first-place{% endif %}">
+                <span class="rank">#{{ loop.index }}</span>
+                <span class="name">{{ player.player_name }}</span>
+                <span class="time">{{ player.total_time }}</span>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="no-data">No escape times recorded yet!</p>
+        {% endif %}
+    </div>
+
+    <div class="all-players-section">
+        <h3>Recent Players</h3>
+        {% if all_players %}
+        <div class="players-grid">
+            {% for player in all_players %}
+            <div class="player-card {% if player.final_complete %}completed{% else %}in-progress{% endif %}">
+                <div class="player-name">{{ player.player_name }}</div>
+                <div class="player-status">
+                    {% if player.final_complete %}
+                    <span class="status completed">Completed: {{ player.total_time }}</span>
+                    {% else %}
+                    <span class="status in-progress">
+                        {% if player.room3_complete %}
+                        Final Room
+                        {% elif player.room2_complete %}
+                        Room 3
+                        {% elif player.room1_complete %}
+                        Room 2
+                        {% else %}
+                        Room 1
+                        {% endif %}
+                    </span>
+                    {% endif %}
+                </div>
+                <div class="player-time">Started: {{ player.start_time[:16] }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="no-data">No players yet</p>
+        {% endif %}
+    </div>
+
+    <div class="navigation-buttons">
+        <a href="{{ url_for('index') }}" class="btn btn-primary">Back to Entrance</a>
+        <a href="{{ url_for('restart') }}" class="btn btn-secondary">New Game</a>
+    </div>
+</div>
+
+<style>
+.leaderboard-page {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.leaderboard-container {
+    margin: 2rem 0;
+}
+
+.leaderboard-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+    background: rgba(139, 0, 0, 0.3);
+    border-radius: 8px 8px 0 0;
+    font-weight: bold;
+    color: #ffd700;
+    font-size: 1.1rem;
+}
+
+.leaderboard-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.leaderboard-row:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.leaderboard-row.first-place {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.1));
+    border-left: 4px solid #ffd700;
+}
+
+.rank {
+    font-weight: bold;
+    color: #ffd700;
+    min-width: 60px;
+}
+
+.name {
+    flex: 1;
+    font-weight: bold;
+}
+
+.time {
+    color: #fff;
+    font-family: monospace;
+    min-width: 100px;
+    text-align: right;
+}
+
+.all-players-section {
+    margin: 3rem 0;
+}
+
+.players-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.player-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid #444;
+    transition: all 0.3s ease;
+}
+
+.player-card.completed {
+    border-left-color: #4caf50;
+}
+
+.player-card.in-progress {
+    border-left-color: #ff9800;
+}
+
+.player-card:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.player-name {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #ffeb3b;
+}
+
+.player-status {
+    margin-bottom: 0.5rem;
+}
+
+.status {
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.status.completed {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4caf50;
+}
+
+.status.in-progress {
+    background: rgba(255, 152, 0, 0.2);
+    color: #ff9800;
+}
+
+.player-time {
+    font-size: 0.8rem;
+    color: #ccc;
+}
+
+.navigation-buttons {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.navigation-buttons .btn {
+    margin: 0 0.5rem;
+    padding: 10px 20px;
+    text-decoration: none;
+}
+
+.no-data {
+    text-align: center;
+    padding: 2rem;
+    color: #888;
+    font-style: italic;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="room entrance">
+    <div class="saves-container">
+        <h2>Your Saved Games</h2>
+        
+        {% if saved_games %}
+            <div class="saves-list">
+                {% for save in saved_games %}
+                <div class="save-item">
+                    <div class="save-info">
+                        <h3>{{ save.save_name }}</h3>
+                        <p class="save-meta">
+                            Room: {{ save.current_room.replace('room', 'Room ').replace('final', 'Final Room') }}
+                            • Saved: {{ save.last_updated[:16] if save.last_updated else save.created_at[:16] }}
+                        </p>
+                    </div>
+                    <div class="save-actions">
+                        <a href="{{ url_for('load_saved_game', save_id=save.id) }}" 
+                           class="btn-primary">Load Game</a>
+                        <form method="POST" action="{{ url_for('delete_saved_game', save_id=save.id) }}" style="display: inline;">
+                            <button type="submit" class="btn-secondary" onclick="return confirm('Are you sure you want to delete this saved game?')">
+                                Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-saves">
+                <p>No saved games found. Save your progress during gameplay!</p>
+                <p>Use the "Quick Save" button in the header during gameplay to save your progress.</p>
+            </div>
+        {% endif %}
+        
+        <div class="saves-actions">
+            <a href="{{ url_for('index') }}" class="btn-primary">Back to Main Menu</a>
+            {% if session.get('session_id') %}
+            <button onclick="quickSave()" class="btn-secondary">Quick Save Current Game</button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+function quickSave() {
+    fetch('/quick_save')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Game saved successfully!');
+                location.reload();
+            } else {
+                alert('Save failed: ' + data.message);
+            }
+        })
+        .catch(error => {
+            alert('Error: ' + error.message);
+        });
+}
+</script>
+
+<style>
+.saves-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.save-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    border-left: 4px solid #4caf50;
+    transition: all 0.3s ease;
+}
+
+.save-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateX(5px);
+}
+
+.save-info h3 {
+    color: #ffeb3b;
+    margin-bottom: 0.5rem;
+    font-size: 1.3rem;
+}
+
+.save-meta {
+    color: #ccc;
+    font-size: 0.9rem;
+}
+
+.save-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.saves-actions {
+    margin-top: 2rem;
+    text-align: center;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.no-saves {
+    text-align: center;
+    padding: 3rem;
+    color: #888;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    margin: 2rem 0;
+}
+
+@media (max-width: 768px) {
+    .save-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .saves-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+</style>
+{% endblock %}

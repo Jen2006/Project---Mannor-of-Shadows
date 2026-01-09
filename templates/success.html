@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="success-screen">
+    <div class="escape-message">
+        <h2>🎉 Congratulations, {{ player_name }}! 🎉</h2>
+        <p>You have successfully escaped the Manor of Shadow!</p>
+        <div class="time-result">
+            <h3>Your Escape Time:</h3>
+            <p class="escape-time">{{ escape_time }}</p>
+        </div>
+    </div>
+
+    <div class="celebration">
+        <p>You've proven yourself worthy of Lord Blackwood's challenges. The manor's secrets are now yours to command!</p>
+    </div>
+
+    <div class="leaderboard-section">
+        <h3>🏆 Top Escapes</h3>
+        <div class="leaderboard">
+            {% if leaderboard %}
+                {% for player in leaderboard %}
+                <div class="leaderboard-item {% if loop.index == 1 %}first-place{% endif %}">
+                    <span class="rank">#{{ loop.index }}</span>
+                    <span class="name">{{ player.player_name }}</span>
+                    <span class="time">{{ player.total_time }}</span>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>No escape times recorded yet!</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="action-buttons">
+        <a href="{{ url_for('restart') }}" class="btn-primary">Play Again</a>
+        <a href="{{ url_for('saves') }}" class="btn-secondary">Load Saved Game</a>
+        <a href="{{ url_for('leaderboard') }}" class="btn-secondary">Full Leaderboard</a>
+        <a href="{{ url_for('index') }}" class="btn-secondary">Main Menu</a>
+    </div>
+</div>
+
+<style>
+.success-screen {
+    text-align: center;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 2rem;
+    border-radius: 15px;
+    border: 3px solid #ffd700;
+    backdrop-filter: blur(10px);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.escape-message h2 {
+    font-size: 2.5rem;
+    color: #ffd700;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.time-result {
+    margin: 2rem 0;
+}
+
+.escape-time {
+    font-size: 2rem;
+    color: #4caf50;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px black;
+}
+
+.celebration {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: rgba(255, 215, 0, 0.1);
+    border-radius: 10px;
+    border-left: 4px solid #ffd700;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+.action-buttons a {
+    padding: 12px 24px;
+    text-decoration: none;
+}
+
+.leaderboard-section {
+    margin: 2rem 0;
+}
+
+.leaderboard {
+    max-width: 500px;
+    margin: 0 auto;
+}
+</style>
+{% endblock %}

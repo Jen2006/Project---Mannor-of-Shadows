@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="room entrance">
+    <div class="auth-form">
+        <h2>Login to Manor of Shadow</h2>
+        
+        <form method="POST">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <button type="submit" class="btn-primary">Login</button>
+        </form>
+        
+        <p style="margin-top: 1rem; text-align: center;">
+            Don't have an account? <a href="{{ url_for('register') }}">Register here</a>
+        </p>
+        
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="{{ url_for('index') }}" class="btn-secondary">Back to Main Menu</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,747 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+body::before {
+    background: url('/static/images/workshop.png') center/cover no-repeat !important;
+}
+</style>
+
+<div class="room workshop">
+    <div class="room-description">
+        <h2>🔧 The Invention Workshop</h2>
+        <p>You find Lord Blackwood's workbench with a note: <em>"To prove you have an inventor's mind, assemble my greatest creation in the correct order."</em></p>
+        <p class="blueprint-clue"><strong>🔦 Blueprint Clue:</strong> Start with motion, add power, create movement, control flow, finish with intelligence.</p>
+    </div>
+    
+    <div class="puzzle-area">
+        <form method="POST" id="assemblyForm">
+            <div class="assembly-puzzle">
+                <h3>🛠️ Assemble the Machine Parts</h3>
+                
+                <!-- Enhanced Assembly Preview -->
+                <div id="assembly-preview" class="assembly-preview">
+                    <div class="preview-header">
+                        <span class="preview-icon">📋</span>
+                        <span class="preview-title">Assembly Sequence Preview</span>
+                    </div>
+                    <div class="preview-sequence">🎯 Select parts to begin assembly...</div>
+                </div>
+                
+                <!-- Enhanced Sequence Slots -->
+                <div class="sequence-slots-container">
+                    <div class="sequence-header">
+                        <h4>📍 Assembly Steps</h4>
+                        <p class="sequence-instruction">Drag parts or select from dropdowns</p>
+                    </div>
+                    
+                    <div class="sequence-slots">
+                        {% for i in range(5) %}
+                        <div class="sequence-slot" data-slot="{{ i }}">
+                            <div class="slot-header">
+                                <div class="slot-number">{{ i + 1 }}</div>
+                                <div class="slot-label">Step {{ i + 1 }}</div>
+                            </div>
+                            <select name="part_seq" class="part-select" required>
+                                <option value="">🔽 Choose Part</option>
+                                {% for code, part in parts.items() %}
+                                <option value="{{ code }}" data-description="{{ part }}">
+                                    {{ code }} - {{ part }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <div class="slot-status">
+                                <span class="status-indicator">⏳</span>
+                                <span class="status-text">Empty</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Enhanced Available Parts -->
+                <div class="available-parts-container">
+                    <div class="parts-header">
+                        <h4>📦 Available Machine Parts</h4>
+                        <p class="parts-subtitle">Click any part to add it to the sequence</p>
+                    </div>
+                    <div class="parts-grid">
+                        {% for code, part in parts.items() %}
+                        <div class="part-card" data-code="{{ code }}">
+                            <div class="part-badge">
+                                <span class="part-icon">
+                                    {% if code == 'S' %}🌀{% elif code == 'G' %}⚙️{% elif code == 'P' %}🔨{% elif code == 'V' %}🎛️{% else %}💡{% endif %}
+                                </span>
+                                <span class="part-code">{{ code }}</span>
+                            </div>
+                            <div class="part-info">
+                                <h5 class="part-name">{{ part }}</h5>
+                                <p class="part-description">
+                                    {% if code == 'S' %}Initiates motion sequence
+                                    {% elif code == 'G' %}Provides mechanical power
+                                    {% elif code == 'P' %}Creates physical movement
+                                    {% elif code == 'V' %}Controls fluid flow
+                                    {% else %}Processes electrical signals{% endif %}
+                                </p>
+                            </div>
+                            <div class="part-action">
+                                <span class="action-icon">👆</span>
+                                <span class="action-text">Click to Select</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="puzzle-interface">
+                <button type="submit" class="btn-primary assemble-btn">
+                    <span class="btn-icon">⚡</span>
+                    Test Assembly
+                    <span class="btn-icon">🔍</span>
+                </button>
+                <div class="interface-hint">
+                    <span class="hint-icon">💡</span>
+                    Check your sequence before submitting
+                </div>
+            </div>
+        </form>
+        
+        {% if error %}
+        <div class="error-message">
+            <span class="error-icon">❌</span>
+            <div class="error-content">
+                <strong>Assembly Error!</strong>
+                <p>{{ error }}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="hint-section">
+        <div class="hint-header">
+            <span class="hint-main-icon">🔍</span>
+            <h4>Assembly Guidance</h4>
+        </div>
+        <div class="hint-content">
+            <p><strong>💡 Think about natural machine startup:</strong> What component typically initiates movement in mechanical systems?</p>
+            <p><strong>🔧 Logical Flow:</strong> The sequence should follow: <em>Initialization → Power → Action → Regulation → Control</em></p>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const selects = document.querySelectorAll('.part-select');
+    const partCards = document.querySelectorAll('.part-card');
+    const preview = document.querySelector('.preview-sequence');
+    const statusIndicators = document.querySelectorAll('.status-indicator');
+    const statusTexts = document.querySelectorAll('.status-text');
+    
+    // Enhanced select interactions
+    selects.forEach((select, index) => {
+        select.addEventListener('change', function() {
+            const selectedValue = this.value;
+            const selectedOption = this.options[this.selectedIndex];
+            const description = selectedOption.getAttribute('data-description');
+            
+            // Update slot status
+            updateSlotStatus(this.parentElement, selectedValue);
+            
+            // Clear duplicate selections with animation
+            selects.forEach((otherSelect, otherIndex) => {
+                if (otherIndex !== index && otherSelect.value === selectedValue) {
+                    otherSelect.parentElement.classList.add('slot-clearing');
+                    setTimeout(() => {
+                        otherSelect.value = '';
+                        updateSlotStatus(otherSelect.parentElement, '');
+                        otherSelect.parentElement.classList.remove('slot-clearing');
+                    }, 300);
+                }
+            });
+            
+            updateAssemblyPreview();
+        });
+        
+        // Enhanced hover effects
+        select.addEventListener('mouseenter', function() {
+            if (!this.value) {
+                this.parentElement.classList.add('slot-hover');
+            }
+        });
+        
+        select.addEventListener('mouseleave', function() {
+            this.parentElement.classList.remove('slot-hover');
+        });
+    });
+
+    // Enhanced part cards with better interactions
+    partCards.forEach(card => {
+        card.addEventListener('click', function() {
+            const code = this.dataset.code;
+            const emptySlot = Array.from(selects).find(select => !select.value);
+            
+            if (emptySlot) {
+                // Find the option with this code
+                const options = Array.from(emptySlot.options);
+                const targetOption = options.find(opt => opt.value === code);
+                
+                if (targetOption) {
+                    emptySlot.value = code;
+                    emptySlot.dispatchEvent(new Event('change'));
+                    
+                    // Enhanced card animation
+                    this.classList.add('card-selected');
+                    setTimeout(() => {
+                        this.classList.remove('card-selected');
+                    }, 1000);
+                }
+            } else {
+                // Show "no empty slots" feedback
+                this.classList.add('card-error');
+                setTimeout(() => {
+                    this.classList.remove('card-error');
+                }, 1000);
+            }
+        });
+        
+        // Enhanced hover effects
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-8px) scale(1.02)';
+            this.style.boxShadow = '0 10px 25px rgba(255, 215, 0, 0.4)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+            this.style.boxShadow = '';
+        });
+    });
+
+    function updateSlotStatus(slotElement, value) {
+        const statusIndicator = slotElement.querySelector('.status-indicator');
+        const statusText = slotElement.querySelector('.status-text');
+        
+        if (value) {
+            statusIndicator.textContent = '✅';
+            statusText.textContent = 'Filled';
+            statusText.style.color = '#4caf50';
+            slotElement.classList.add('slot-filled');
+            slotElement.classList.remove('slot-empty');
+        } else {
+            statusIndicator.textContent = '⏳';
+            statusText.textContent = 'Empty';
+            statusText.style.color = '#ff9800';
+            slotElement.classList.add('slot-empty');
+            slotElement.classList.remove('slot-filled');
+        }
+    }
+
+    function updateAssemblyPreview() {
+        const sequence = Array.from(selects).map(select => select.value).filter(val => val);
+        const previewElement = document.getElementById('assembly-preview');
+        
+        if (preview) {
+            if (sequence.length > 0) {
+                const sequenceHTML = sequence.map(item => 
+                    `<span class="sequence-part">${item}</span>`
+                ).join(' <span class="sequence-arrow">➡️</span> ');
+                
+                preview.innerHTML = sequenceHTML;
+                previewElement.classList.add('preview-active');
+                previewElement.classList.remove('preview-inactive');
+            } else {
+                preview.innerHTML = '<span class="preview-placeholder">🎯 Select parts to begin assembly...</span>';
+                previewElement.classList.add('preview-inactive');
+                previewElement.classList.remove('preview-active');
+            }
+        }
+    }
+    
+    // Initialize all slot statuses
+    selects.forEach(select => {
+        updateSlotStatus(select.parentElement, select.value);
+    });
+    updateAssemblyPreview();
+});
+
+// Enhanced CSS animations
+const enhancedStyles = document.createElement('style');
+enhancedStyles.textContent = `
+    @keyframes pulseGlow {
+        0% { box-shadow: 0 0 5px rgba(76, 175, 80, 0.5); }
+        50% { box-shadow: 0 0 20px rgba(76, 175, 80, 0.8); }
+        100% { box-shadow: 0 0 5px rgba(76, 175, 80, 0.5); }
+    }
+    
+    @keyframes bounceIn {
+        0% { transform: scale(0.8); opacity: 0; }
+        60% { transform: scale(1.1); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+    
+    .card-selected {
+        animation: pulseGlow 1s ease-in-out;
+    }
+    
+    .card-error {
+        animation: shake 0.5s ease-in-out;
+        background: rgba(244, 67, 54, 0.2) !important;
+    }
+    
+    .slot-clearing {
+        animation: shake 0.3s ease-in-out;
+    }
+    
+    .slot-hover {
+        transform: translateY(-2px);
+        transition: all 0.3s ease;
+    }
+`;
+document.head.appendChild(enhancedStyles);
+</script>
+
+<style>
+/* Enhanced Room Description */
+.room-description h2 {
+    background: linear-gradient(135deg, #a52a2a, #d2691e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+}
+
+.blueprint-clue {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.1));
+    border-left: 4px solid #ffd700;
+    padding: 1rem;
+    border-radius: 8px;
+    font-style: italic;
+}
+
+/* Enhanced Assembly Preview */
+.assembly-preview {
+    background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    padding: 1.5rem;
+    border-radius: 15px;
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    margin: 2rem 0;
+    text-align: center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 0.8rem;
+}
+
+.preview-icon {
+    font-size: 1.5rem;
+}
+
+.preview-title {
+    color: #ffd700;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.preview-sequence {
+    font-size: 1.3rem;
+    min-height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.assembly-preview.preview-active {
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(76, 175, 80, 0.05));
+    border: 2px solid rgba(76, 175, 80, 0.5);
+    animation: pulseGlow 2s infinite;
+}
+
+.assembly-preview.preview-inactive {
+    background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    border: 2px dashed rgba(255, 215, 0, 0.3);
+}
+
+.sequence-part {
+    background: linear-gradient(135deg, #8b0000, #a52a2a);
+    color: white;
+    padding: 0.8rem 1.2rem;
+    border-radius: 25px;
+    font-weight: bold;
+    border: 2px solid #ffd700;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    animation: bounceIn 0.5s ease-out;
+}
+
+.sequence-arrow {
+    color: #ffd700;
+    font-weight: bold;
+    font-size: 1.3rem;
+}
+
+.preview-placeholder {
+    color: #ccc;
+    font-style: italic;
+}
+
+/* Enhanced Sequence Slots */
+.sequence-slots-container {
+    margin: 2.5rem 0;
+}
+
+.sequence-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.sequence-header h4 {
+    color: #ffd700;
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+}
+
+.sequence-instruction {
+    color: #ccc;
+    font-size: 0.9rem;
+}
+
+.sequence-slots {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.sequence-slot {
+    flex: 1;
+    min-width: 180px;
+    max-width: 200px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+    padding: 1.2rem;
+    border-radius: 12px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.sequence-slot::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.sequence-slot:hover::before {
+    left: 100%;
+}
+
+.slot-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.8rem;
+}
+
+.slot-number {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #666, #888);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.slot-label {
+    color: #ffd700;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.part-select {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    background: rgba(42, 42, 42, 0.9);
+    color: #f5f5f5;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    margin-bottom: 0.8rem;
+}
+
+.part-select:focus {
+    outline: none;
+    border-color: #4caf50;
+    box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+}
+
+.slot-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+}
+
+.status-indicator {
+    font-size: 1rem;
+}
+
+.slot-filled {
+    border-color: rgba(76, 175, 80, 0.5);
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(76, 175, 80, 0.05));
+}
+
+.slot-empty {
+    border-color: rgba(255, 152, 0, 0.5);
+    background: linear-gradient(135deg, rgba(255, 152, 0, 0.1), rgba(255, 152, 0, 0.05));
+}
+
+/* Enhanced Parts Grid */
+.available-parts-container {
+    margin: 2rem 0;
+}
+
+.parts-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.parts-header h4 {
+    color: #ffd700;
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+}
+
+.parts-subtitle {
+    color: #ccc;
+    font-size: 0.9rem;
+}
+
+.parts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.2rem;
+    margin-top: 1rem;
+}
+
+.part-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    padding: 1.5rem;
+    border-radius: 15px;
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.part-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #ffd700, #a52a2a, #ffd700);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.part-card:hover::before {
+    transform: scaleX(1);
+}
+
+.part-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.part-icon {
+    font-size: 2.5rem;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.part-code {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #ffd700;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.part-info {
+    margin-bottom: 1rem;
+}
+
+.part-name {
+    color: white;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.part-description {
+    color: #ccc;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.part-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: rgba(76, 175, 80, 0.2);
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.action-icon {
+    font-size: 1rem;
+}
+
+.action-text {
+    font-size: 0.8rem;
+    color: #4caf50;
+    font-weight: bold;
+}
+
+/* Enhanced Buttons and Interface */
+.assemble-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 15px 35px;
+    font-size: 1.3rem;
+    background: linear-gradient(135deg, #a52a2a, #8b0000);
+    border: none;
+    border-radius: 50px;
+    box-shadow: 0 4px 15px rgba(165, 42, 42, 0.4);
+    transition: all 0.3s ease;
+}
+
+.assemble-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(165, 42, 42, 0.6);
+    background: linear-gradient(135deg, #8b0000, #a52a2a);
+}
+
+.btn-icon {
+    font-size: 1.5rem;
+}
+
+.interface-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.8rem;
+    color: #ccc;
+    font-size: 0.9rem;
+}
+
+/* Enhanced Error Messages */
+.error-message {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.2rem;
+    background: linear-gradient(135deg, rgba(244, 67, 54, 0.1), rgba(244, 67, 54, 0.05));
+    border-radius: 10px;
+    border-left: 4px solid #f44336;
+    margin-top: 1.5rem;
+    animation: bounceIn 0.5s ease-out;
+}
+
+.error-icon {
+    font-size: 2rem;
+}
+
+.error-content strong {
+    color: #f44336;
+    display: block;
+    margin-bottom: 0.3rem;
+}
+
+/* Enhanced Hint Section */
+.hint-section {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.05));
+    padding: 1.5rem;
+    border-radius: 12px;
+    border-left: 4px solid #ffd700;
+    margin-top: 1.5rem;
+}
+
+.hint-header {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+.hint-main-icon {
+    font-size: 1.8rem;
+}
+
+.hint-header h4 {
+    color: #ffd700;
+    margin: 0;
+}
+
+.hint-content p {
+    margin-bottom: 0.8rem;
+    line-height: 1.5;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sequence-slots {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .sequence-slot {
+        min-width: 100%;
+        max-width: 100%;
+    }
+    
+    .parts-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .assemble-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+</style>
+{% endblock %}

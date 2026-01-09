@@ -1,0 +1,571 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Georgia', serif;
+    color: #f5f5f5;
+    min-height: 100vh;
+    line-height: 1.6;
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: auto;
+    font-size: 18px;
+}
+
+/* Lighter background overlay */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -2;
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+}
+
+/* Room backgrounds */
+body.entrance::before { 
+    background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
+                url('/static/images/background.png') center/cover no-repeat;
+}
+body.library::before { 
+    background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
+                url('/static/images/library.png') center/cover no-repeat;
+}
+body.study::before { 
+    background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
+                url('/static/images/study.png') center/cover no-repeat;
+}
+body.cellar::before { 
+    background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
+                url('/static/images/cellar.png') center/cover no-repeat;
+}
+body.final-room::before { 
+    background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
+                url('/static/images/final-room.png') center/cover no-repeat;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 1;
+}
+
+/* Header with larger fonts */
+header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+    border: 1px solid #666;
+    backdrop-filter: blur(5px);
+    flex-shrink: 0;
+}
+
+h1 {
+    font-size: 2.2rem;
+    color: #a52a2a;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+    margin-bottom: 0.5rem;
+}
+
+.timer {
+    font-size: 1.1rem;
+    color: #ffeb3b;
+    font-weight: bold;
+}
+
+/* User info in header */
+.user-info {
+    font-size: 1rem;
+    color: #4caf50;
+    margin-top: 0.5rem;
+}
+
+/* Game actions */
+.game-actions {
+    margin-top: 0.5rem;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Main Content */
+main {
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    overflow: visible;
+    min-height: 0;
+}
+
+/* Room container with lighter background */
+.room {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 2px solid #666;
+    box-shadow: 0 0 25px rgba(165, 42, 42, 0.5);
+    max-width: 900px;
+    width: 100%;
+    backdrop-filter: blur(3px);
+    overflow-y: visible;
+    margin-bottom: 1rem;
+}
+
+/* Custom Scrollbar for Room Content */
+.room::-webkit-scrollbar {
+    width: 6px;
+}
+
+.room::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+}
+
+.room::-webkit-scrollbar-thumb {
+    background: #8b0000;
+    border-radius: 3px;
+}
+
+/* Room description with larger fonts */
+.room-description {
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.room-description h2 {
+    color: #a52a2a;
+    font-size: 1.8rem;
+    margin-bottom: 0.8rem;
+    text-shadow: 1px 1px 2px black;
+}
+
+.room-description p {
+    margin-bottom: 0.8rem;
+    font-size: 1.1rem;
+    line-height: 1.4;
+}
+
+/* Puzzle Area */
+.puzzle-area {
+    margin: 1rem 0;
+    overflow-y: visible;
+    padding: 0.5rem;
+}
+
+.puzzle-area::-webkit-scrollbar {
+    width: 4px;
+}
+
+/* Puzzle Interface */
+.puzzle-interface {
+    text-align: center;
+    margin: 1rem 0;
+    flex-shrink: 0;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.9);
+    border-radius: 8px;
+    border-top: 2px solid #444;
+}
+
+/* Form Elements */
+input[type="text"], input[type="number"], input[type="password"], input[type="email"] {
+    padding: 12px;
+    font-size: 1.1rem;
+    border: 2px solid #666;
+    border-radius: 6px;
+    background: rgba(60, 60, 60, 0.9);
+    color: #f5f5f5;
+    margin-right: 10px;
+    width: 250px;
+    transition: all 0.3s ease;
+}
+
+input:focus {
+    outline: none;
+    border-color: #a52a2a;
+    box-shadow: 0 0 5px rgba(165, 42, 42, 0.5);
+}
+
+select {
+    padding: 10px;
+    font-size: 1.1rem;
+    border: 2px solid #666;
+    border-radius: 6px;
+    background: rgba(60, 60, 60, 0.9);
+    color: #f5f5f5;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+select:focus {
+    outline: none;
+    border-color: #a52a2a;
+}
+
+/* Buttons */
+.btn-primary {
+    padding: 12px 24px;
+    font-size: 1.2rem;
+    background: linear-gradient(45deg, rgba(165, 42, 42, 0.9), rgba(205, 92, 92, 0.9));
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(45deg, rgba(205, 92, 92, 0.9), rgba(165, 42, 42, 0.9));
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.btn-secondary {
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: #f5f5f5;
+    border: 1px solid #666;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+/* Authentication forms */
+.auth-form {
+    background: rgba(0, 0, 0, 0.6);
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 400px;
+    margin: 0 auto;
+    border: 1px solid #666;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.8rem;
+    color: #ffeb3b;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.1rem;
+}
+
+/* Error and Alert Messages */
+.error {
+    color: #ff6b6b;
+    margin-top: 0.8rem;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px black;
+    font-size: 1rem;
+    padding: 0.8rem;
+    background: rgba(255, 107, 107, 0.1);
+    border-radius: 5px;
+    border-left: 3px solid #ff6b6b;
+}
+
+.alert {
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.alert-success {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4caf50;
+    border-left: 3px solid #4caf50;
+}
+
+.alert-error {
+    background: rgba(244, 67, 54, 0.2);
+    color: #f44336;
+    border-left: 3px solid #f44336;
+}
+
+/* Clues and Hints */
+.clues, .hint {
+    background: rgba(139, 0, 0, 0.2);
+    padding: 0.8rem;
+    border-radius: 6px;
+    border-left: 3px solid #8b0000;
+    margin-top: 0.8rem;
+    backdrop-filter: blur(2px);
+    font-size: 0.9rem;
+}
+
+.clues h3, .hint p strong {
+    color: #ffd700;
+    font-size: 1rem;
+}
+
+.clues ul {
+    list-style-position: inside;
+    text-align: left;
+}
+
+.clues li {
+    margin: 0.5rem 0;
+}
+
+/* Registration Form */
+.registration-form {
+    background: rgba(139, 0, 0, 0.3);
+    padding: 2rem;
+    border-radius: 10px;
+    margin: 2rem 0;
+    border: 1px solid #8b0000;
+    text-align: center;
+}
+
+.registration-form .form-group {
+    text-align: left;
+}
+
+/* Leaderboard Styles */
+.leaderboard-section {
+    background: rgba(0, 0, 0, 0.6);
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin: 2rem 0;
+    border: 1px solid #444;
+}
+
+.leaderboard {
+    margin: 1rem 0;
+}
+
+.leaderboard-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem;
+    margin: 0.5rem 0;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    border-left: 4px solid #444;
+    transition: all 0.3s ease;
+}
+
+.leaderboard-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateX(5px);
+}
+
+.leaderboard-item.first-place {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.1));
+    border-left-color: #ffd700;
+}
+
+.leaderboard-item.second-place {
+    background: linear-gradient(135deg, rgba(192, 192, 192, 0.2), rgba(192, 192, 192, 0.1));
+    border-left-color: #c0c0c0;
+}
+
+.leaderboard-item.third-place {
+    background: linear-gradient(135deg, rgba(205, 127, 50, 0.2), rgba(205, 127, 50, 0.1));
+    border-left-color: #cd7f32;
+}
+
+.rank {
+    font-weight: bold;
+    color: #ffd700;
+    min-width: 40px;
+}
+
+.player-name {
+    flex: 1;
+    font-weight: bold;
+}
+
+.time {
+    color: #fff;
+    font-family: monospace;
+}
+
+/* Players List Styles */
+.players-list {
+    margin: 1rem 0;
+}
+
+.player-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem;
+    margin: 0.3rem 0;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.player-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.status {
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.status.completed {
+    background: rgba(0, 255, 0, 0.2);
+    color: #0f0;
+}
+
+.status.in-progress {
+    background: rgba(255, 255, 0, 0.2);
+    color: #ff0;
+}
+
+.no-data {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    padding: 2rem;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    margin-top: 1rem;
+    padding: 0.6rem;
+    color: #888;
+    border-top: 1px solid #444;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 8px;
+    backdrop-filter: blur(5px);
+    flex-shrink: 0;
+    font-size: 0.9rem;
+}
+
+/* Save notification */
+.save-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(76, 175, 80, 0.9);
+    color: white;
+    padding: 1rem;
+    border-radius: 5px;
+    z-index: 1000;
+    animation: fadeOut 3s forwards;
+}
+
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    70% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* Specific styles for scrollable pages */
+.leaderboard-page,
+.saves-container,
+.profile-container {
+    width: 100%;
+    overflow: visible;
+}
+
+.leaderboard-container,
+.players-grid,
+.saves-list {
+    max-height: none;
+    overflow: visible;
+}
+
+/* Success screen specific */
+.success-screen {
+    text-align: center;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 2rem;
+    border-radius: 15px;
+    border: 3px solid #ffd700;
+    backdrop-filter: blur(10px);
+    max-width: 800px;
+    margin: 0 auto;
+    overflow: visible;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    h1 {
+        font-size: 1.8rem;
+    }
+    
+    .room {
+        padding: 1rem;
+    }
+    
+    input[type="text"], input[type="number"], input[type="password"], input[type="email"] {
+        width: 100%;
+        margin-bottom: 0.8rem;
+        margin-right: 0;
+        font-size: 1rem;
+    }
+    
+    .room-description p {
+        font-size: 1rem;
+    }
+    
+    .btn-primary, .btn-secondary {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .game-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+/* Hide timer on success page */
+.success-screen ~ header .timer {
+    display: none;
+}

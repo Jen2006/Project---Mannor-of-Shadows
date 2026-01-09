@@ -1,0 +1,374 @@
+/* Room-specific puzzle styles */
+
+/* Workshop - Machine Assembly */
+.assembly-puzzle {
+    text-align: center;
+}
+
+.sequence-slots {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.sequence-slot {
+    flex: 1;
+    min-width: 150px;
+    max-width: 200px;
+}
+
+.sequence-slot select {
+    width: 100%;
+    padding: 12px;
+    background: rgba(42, 42, 42, 0.8);
+    color: white;
+    border: 2px solid #666;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.sequence-slot select:focus {
+    border-color: #4caf50;
+}
+
+.available-parts {
+    background: rgba(139, 0, 0, 0.2);
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+    border: 1px solid #8b0000;
+}
+
+.part-item {
+    padding: 0.8rem;
+    margin: 0.5rem 0;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    border-left: 4px solid #ffd700;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.part-item:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateX(5px);
+}
+
+/* Observatory - Riddle */
+.riddle-container {
+    text-align: center;
+    padding: 1rem;
+}
+
+.riddle-text {
+    background: rgba(255, 215, 0, 0.1);
+    padding: 1.5rem;
+    border-radius: 10px;
+    border: 2px solid #ffd700;
+    margin: 1rem 0;
+}
+
+.riddle-text h3 {
+    color: #ffd700;
+    font-style: italic;
+    font-size: 1.3rem;
+    line-height: 1.5;
+}
+
+.visual-clues {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.clue-item {
+    background: rgba(139, 0, 0, 0.2);
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #444;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.clue-item:hover {
+    background: rgba(139, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Laboratory - Pattern */
+.pattern-puzzle {
+    text-align: center;
+}
+
+.sequence-display {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 2rem 0;
+    flex-wrap: wrap;
+}
+
+.number {
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #8b0000, #a52a2a);
+    border-radius: 50%;
+    font-size: 1.5rem;
+    font-weight: bold;
+    border: 2px solid #ffd700;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.number.missing {
+    background: rgba(139, 0, 0, 0.3);
+    border: 2px dashed #ffd700;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.7; }
+    50% { opacity: 1; }
+    100% { opacity: 0.7; }
+}
+
+.pattern-hint {
+    background: rgba(46, 204, 113, 0.2);
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid #2ecc71;
+    margin: 1rem 0;
+    font-size: 1rem;
+}
+
+/* Control Room - Logic Puzzle */
+.logic-puzzle {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.clues-section {
+    background: rgba(139, 0, 0, 0.2);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+    border: 1px solid #8b0000;
+}
+
+.clues-list {
+    text-align: left;
+    list-style-type: none;
+    padding: 0;
+}
+
+.clues-list li {
+    padding: 0.8rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 1rem;
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.clues-list li:before {
+    content: "•";
+    color: #ffd700;
+    position: absolute;
+    left: 0;
+}
+
+.clues-list li:last-child {
+    border-bottom: none;
+}
+
+.logic-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.logic-grid h4 {
+    grid-column: 1 / -1;
+    color: #ffd700;
+    border-bottom: 2px solid #8b0000;
+    padding-bottom: 0.5rem;
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+.logic-form .form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.logic-form label {
+    margin-bottom: 0.8rem;
+    color: #ffd700;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.logic-form select {
+    padding: 10px;
+    background: rgba(42, 42, 42, 0.8);
+    color: white;
+    border: 2px solid #666;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+/* Welcome Section */
+.welcome-section {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.welcome-section h2 {
+    color: #ffd700;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.welcome-section p {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+/* Success Screen Enhancements */
+.success-screen {
+    text-align: center;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 2rem;
+    border-radius: 15px;
+    border: 3px solid #ffd700;
+    backdrop-filter: blur(10px);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.celebration h2 {
+    font-size: 2.5rem;
+    color: #ffd700;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.time-result {
+    margin: 2rem 0;
+}
+
+.escape-time {
+    font-size: 2.5rem;
+    color: #4caf50;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px black;
+    animation: bounce 1s ease-in-out;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+    40% {transform: translateY(-10px);}
+    60% {transform: translateY(-5px);}
+}
+
+.celebration {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: rgba(255, 215, 0, 0.1);
+    border-radius: 10px;
+    border-left: 4px solid #ffd700;
+    font-size: 1.1rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+.action-buttons a {
+    padding: 12px 24px;
+    text-decoration: none;
+    font-size: 1.1rem;
+}
+
+/* Mobile Responsive for Puzzles */
+@media (max-width: 768px) {
+    .sequence-slots {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .sequence-slot {
+        min-width: 100%;
+        max-width: 100%;
+    }
+    
+    .visual-clues {
+        grid-template-columns: 1fr;
+    }
+    
+    .logic-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .number {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+    }
+    
+    .riddle-text h3 {
+        font-size: 1.1rem;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .action-buttons a {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* Animation for correct answers */
+.correct-answer {
+    animation: correctGlow 1s ease-in-out;
+}
+
+@keyframes correctGlow {
+    0% { box-shadow: 0 0 5px #4caf50; }
+    50% { box-shadow: 0 0 20px #4caf50; }
+    100% { box-shadow: 0 0 5px #4caf50; }
+}
+
+/* Loading states */
+.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: " ...";
+    animation: loadingDots 1.5s infinite;
+}
+
+@keyframes loadingDots {
+    0%, 20% { content: " ."; }
+    40% { content: " .."; }
+    60%, 100% { content: " ..."; }
+}

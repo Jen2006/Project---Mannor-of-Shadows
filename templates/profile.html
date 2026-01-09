@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="room entrance">
+    <div class="profile-container">
+        <h2>Player Profile</h2>
+        
+        <div class="profile-info">
+            <div class="profile-section">
+                <h3>Account Information</h3>
+                <div class="info-item">
+                    <label>Username:</label>
+                    <span>{{ profile.username }}</span>
+                </div>
+                {% if profile.email %}
+                <div class="info-item">
+                    <label>Email:</label>
+                    <span>{{ profile.email }}</span>
+                </div>
+                {% endif %}
+                <div class="info-item">
+                    <label>Member Since:</label>
+                    <span>{{ profile.created_at[:10] }}</span>
+                </div>
+                {% if profile.last_login %}
+                <div class="info-item">
+                    <label>Last Login:</label>
+                    <span>{{ profile.last_login[:16] }}</span>
+                </div>
+                {% endif %}
+            </div>
+            
+            {% if profile.display_name or profile.bio %}
+            <div class="profile-section">
+                <h3>Profile Information</h3>
+                {% if profile.display_name %}
+                <div class="info-item">
+                    <label>Display Name:</label>
+                    <span>{{ profile.display_name }}</span>
+                </div>
+                {% endif %}
+                {% if profile.bio %}
+                <div class="info-item">
+                    <label>Bio:</label>
+                    <span>{{ profile.bio }}</span>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="profile-stats">
+            <h3>Game Statistics</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Games Completed</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Best Time</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Puzzles Solved</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="profile-actions">
+            <a href="{{ url_for('saves') }}" class="btn-primary">View Saved Games</a>
+            <a href="{{ url_for('leaderboard') }}" class="btn-secondary">View Leaderboard</a>
+            <a href="{{ url_for('index') }}" class="btn-secondary">Back to Main Menu</a>
+        </div>
+    </div>
+</div>
+
+<style>
+.profile-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.profile-section {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin: 1.5rem 0;
+    border-left: 4px solid #8b0000;
+}
+
+.profile-section h3 {
+    color: #ffd700;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #444;
+    padding-bottom: 0.5rem;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    margin: 0.8rem 0;
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 5px;
+}
+
+.info-item label {
+    font-weight: bold;
+    color: #ccc;
+}
+
+.info-item span {
+    color: #fff;
+}
+
+.profile-stats {
+    background: rgba(139, 0, 0, 0.2);
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin: 1.5rem 0;
+    border: 1px solid #8b0000;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ffd700;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: #ccc;
+    font-size: 0.9rem;
+}
+
+.profile-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+.profile-actions a {
+    padding: 10px 20px;
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    .info-item {
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+    
+    .profile-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+</style>
+{% endblock %}

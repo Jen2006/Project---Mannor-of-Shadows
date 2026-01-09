@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="room entrance">
+    <div class="auth-form">
+        <h2>Register for Manor of Shadow</h2>
+        
+        <form method="POST">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required maxlength="50">
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email (optional):</label>
+                <input type="email" id="email" name="email">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required minlength="6">
+                <small style="color: #ccc; font-size: 0.8rem;">Must be at least 6 characters long</small>
+            </div>
+            
+            <button type="submit" class="btn-primary">Register</button>
+        </form>
+        
+        <p style="margin-top: 1rem; text-align: center;">
+            Already have an account? <a href="{{ url_for('login') }}">Login here</a>
+        </p>
+        
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="{{ url_for('index') }}" class="btn-secondary">Back to Main Menu</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

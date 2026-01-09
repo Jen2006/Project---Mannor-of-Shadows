@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="room entrance">
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+        <h2>Welcome to Manor of Shadow</h2>
+        <p>You find yourself in the grand entrance hall of the Manor of Shadow. The heavy oak door behind you has locked itself, and the only way out is forward.</p>
+        <p>Dark portraits line the walls, their eyes seeming to follow your every move. A cold draft whispers through the corridor ahead.</p>
+        <p>Are you ready to begin your escape?</p>
+    </div>
+
+    <!-- Authentication Buttons -->
+    <div class="auth-buttons" id="auth-buttons">
+        {% if not session.get('logged_in') %}
+        <div style="text-align: center; margin: 2rem 0;">
+            <a href="{{ url_for('login') }}" class="btn-primary" style="margin-right: 1rem;">Login</a>
+            <a href="{{ url_for('register') }}" class="btn-secondary">Register</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Player Registration Form -->
+    {% if session.get('logged_in') %}
+    <div class="registration-form">
+        <h3>Start Your Adventure</h3>
+        <form method="POST">
+            <div class="form-group">
+                <label for="player_name">Enter Your Name:</label>
+                <input type="text" id="player_name" name="player_name" 
+                       placeholder="Your adventurer name" required maxlength="50">
+            </div>
+            <button type="submit" class="btn-primary">Begin Escape Challenge</button>
+        </form>
+        
+        <div style="text-align: center; margin-top: 1rem;">
+            <a href="{{ url_for('saves') }}" class="btn-secondary">Load Saved Game</a>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- How to Play Section -->
+    <div class="clues">
+        <h3>How to Play:</h3>
+        <ul>
+            <li>Solve puzzles in each room to progress</li>
+            <li>Look carefully for hidden clues</li>
+            <li>Combine information from different rooms</li>
+            <li>Save your progress and continue anytime</li>
+            <li>Your time starts when you begin!</li>
+        </ul>
+    </div>
+
+    <!-- Top Leaderboard -->
+    <div class="leaderboard-section">
+        <h3>🏆 Top Escapers</h3>
+        {% if leaderboard %}
+        <div class="leaderboard">
+            {% for player in leaderboard %}
+            <div class="leaderboard-item {% if loop.index == 1 %}first-place{% elif loop.index == 2 %}second-place{% elif loop.index == 3 %}third-place{% endif %}">
+                <div class="rank">#{{ loop.index }}</div>
+                <div class="player-name">{{ player.player_name }}</div>
+                <div class="time">{{ player.total_time }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="no-data">No completions yet. Be the first to escape!</p>
+        {% endif %}
+        
+        <a href="{{ url_for('leaderboard') }}" class="btn-secondary">View Full Leaderboard</a>
+    </div>
+
+    <!-- Recent Players -->
+    <div class="recent-players">
+        <h3>Recent Adventurers</h3>
+        {% if all_players %}
+        <div class="players-list">
+            {% for player in all_players[:10] %}
+            <div class="player-item">
+                <div class="player-info">
+                    <span class="name">{{ player.player_name }}</span>
+                    <span class="status {% if player.final_complete %}completed{% else %}in-progress{% endif %}">
+                        {% if player.final_complete %}
+                            Completed
+                        {% elif player.room3_complete %}
+                            Final Room
+                        {% elif player.room2_complete %}
+                            Room 3
+                        {% elif player.room1_complete %}
+                            Room 2
+                        {% else %}
+                            Room 1
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="time-info">
+                    {% if player.total_time %}
+                    <span class="time">{{ player.total_time }}</span>
+                    {% else %}
+                    <span class="started">Started: {{ player.start_time[:16] }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="no-data">No players yet. Start your adventure!</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

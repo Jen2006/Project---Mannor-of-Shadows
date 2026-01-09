@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Manor of Shadow{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/puzzles.css') }}">
+</head>
+<body class="{% if 'room1' in request.url_rule.rule %}library{% elif 'room2' in request.url_rule.rule %}study{% elif 'room3' in request.url_rule.rule %}cellar{% elif 'final' in request.path %}final-room{% else %}entrance{% endif %}">
+    <div class="container">
+        <header>
+            <h1>Manor of Shadow</h1>
+            <div class="timer" id="timer">Time: 00:00:00</div>
+            
+            {% if session.get('logged_in') %}
+            <div class="user-info">
+                Welcome, {{ session.get('username', 'Player') }}!
+                <a href="{{ url_for('logout') }}" class="btn-secondary" style="margin-left: 10px; padding: 5px 10px; font-size: 0.9rem;">
+                    Logout
+                </a>
+            </div>
+            {% endif %}
+            
+            {% if session.get('logged_in') and 'session_id' in session %}
+            <div class="game-actions">
+                <button onclick="quickSave()" class="btn-secondary" style="padding: 5px 10px; font-size: 0.9rem;">
+                    💾 Quick Save
+                </button>
+                <a href="{{ url_for('saves') }}" class="btn-secondary" style="padding: 5px 10px; font-size: 0.9rem;">
+                    📁 Load Game
+                </a>
+            </div>
+            {% endif %}
+        </header>
+        
+        <main>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            {% block content %}{% endblock %}
+        </main>
+        
+        <footer>
+            <p>Test your intelligence and desire to escape this manor</p>
+        </footer>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/game.js') }}"></script>
+</body>
+</html>
